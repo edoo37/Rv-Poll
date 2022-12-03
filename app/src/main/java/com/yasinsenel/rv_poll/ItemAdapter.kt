@@ -9,28 +9,35 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yasinsenel.rv_poll.databinding.ItemsLayoutBinding
 
 
-
-
 class ItemAdapter : RecyclerView.Adapter<ItemAdapter.Holder>() {
 
     private var clickedListener = false
+    private val list: ArrayList<Data> = arrayListOf()
 
-    private val list: ArrayList<String> = arrayListOf()
+
+    var item_position = -1
 
 
     inner class Holder(val binding: ItemsLayoutBinding,val context : Context) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data : String){
+        fun bind(data : Data){
 
             binding.apply {
-                textView.text = data
-                //Burda renk değiştirme ve silme işlemleri yapılıyor
-                if (clickedListener) {
-                    textView.setBackgroundResource(R.drawable.back_button)
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.purple_500))
+                recyclerViewButton.text = data.ans
+
+                // Adapter pozisyonunu alıp ona eşitliyor. Öteki itemleri default yapıyor
+                if (item_position==adapterPosition) {
+                    recyclerViewButton.setBackgroundColor(ContextCompat.getColor(context,R.color.teal_200))
+
+                } else {
+                    recyclerViewButton.setBackgroundColor(ContextCompat.getColor(context,R.color.main_color))
+
                 }
-                textView.setOnClickListener {
-                    removeUnSelectedItem(data)
+                recyclerViewButton.setOnClickListener {
+                    //removeUnSelectedItem(data)
+                    item_position=adapterPosition
+                    notifyDataSetChanged();
                 }
+
             }
 
         }
@@ -47,20 +54,21 @@ override fun onBindViewHolder(holder: Holder, position: Int) {
         val data = list[position]
         holder.bind(data)
 
+
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    fun fillList(fillList: ArrayList<String>) {
+    fun fillList(fillList: ArrayList<Data>) {
         list.addAll(fillList)
         notifyDataSetChanged()
     }
 
-    private fun removeUnSelectedItem(data: String) {
+    private fun removeUnSelectedItem(data : Data) {
         clickedListener = true
-        val newList: ArrayList<String> = arrayListOf()
+        val newList: ArrayList<Data> = arrayListOf()
         newList.add(data)
         list.clear()
         list.addAll(newList)
